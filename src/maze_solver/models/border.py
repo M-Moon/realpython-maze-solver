@@ -5,7 +5,7 @@ from enum import IntFlag, auto
 
 class Border(IntFlag):
     EMPTY = 0
-    TOP= auto()
+    TOP = auto()
     BOTTOM = auto()
     LEFT = auto()
     RIGHT = auto()
@@ -16,13 +16,13 @@ class Border(IntFlag):
             self.TOP | self.RIGHT,
             self.TOP | self.LEFT,
             self.BOTTOM | self.RIGHT,
-            self.BOTTOM | self.LEFT
+            self.BOTTOM | self.LEFT,
         )
-    
+
     @property
     def dead_end(self) -> bool:
         return self.bit_count() == 3
-    
+
     @property
     def intersection(self) -> bool:
         return self.bit_count() < 2

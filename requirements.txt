@@ -1,0 +1,1 @@
+-e git+https://github.com/M-Moon/realpython-maze-solver.git@3e62ff86169651fc26451043be7afeee9e023853#egg=maze_solver

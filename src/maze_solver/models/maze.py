@@ -7,11 +7,15 @@ from typing import Iterator
 from .square import Square
 
 
+class InvalidMazeException(Exception):
+    """Exception for when a maze is initialised with improper squares"""
+
+
 @dataclass(frozen=True)
 class Maze:
     squares: tuple[Square, ...]
 
-    def __post__init(self) -> None:
+    def __post_init__(self) -> None:
         validate_indices(self)
         validate_rows_columns(self)
 
@@ -31,14 +35,15 @@ class Maze:
 
 
 def validate_indices(maze: Maze) -> None:
-    assert [square.index for square in maze] == list(
-        range(len(maze.squares))
-    ), "Wrong square.index"
+    if not [square.index for square in maze] == list(range(len(maze.squares))):
+        raise InvalidMazeException("Square indices are incorrectly mapped")
 
 
 def validate_rows_columns(maze: Maze) -> None:
     for y in range(maze.height):
         for x in range(maze.width):
             square = maze[y * maze.width + x]
-            assert square.row == y, "Wrong square.row"
-            assert square.column == x, "Wrong square.column"
+            if not square.row == y:
+                raise InvalidMazeException("Square's row is not correct")
+            if not square.column == x:
+                raise InvalidMazeException("Square's column is incorrect")
