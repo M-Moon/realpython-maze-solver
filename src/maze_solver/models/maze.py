@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from typing import Iterator
 
+from .role import Role
 from .square import Square
 
 
@@ -18,6 +19,8 @@ class Maze:
     def __post_init__(self) -> None:
         validate_indices(self)
         validate_rows_columns(self)
+        validate_entrance(self)
+        validate_exit(self)
 
     def __iter__(self) -> Iterator[Square]:
         return iter(self.squares)
@@ -33,6 +36,14 @@ class Maze:
     def height(self):
         return max(square.row for square in self) + 1
 
+    @cached_property
+    def entrance(self):
+        return next(square for square in self if square.role is Role.ENTRANCE)
+
+    @cached_property
+    def exit(self):
+        return next(square for square in self if square.role is Role.EXIT)
+
 
 def validate_indices(maze: Maze) -> None:
     if not [square.index for square in maze] == list(range(len(maze.squares))):
@@ -47,3 +58,13 @@ def validate_rows_columns(maze: Maze) -> None:
                 raise InvalidMazeException("Square's row is not correct")
             if not square.column == x:
                 raise InvalidMazeException("Square's column is incorrect")
+
+
+def validate_entrance(maze: Maze) -> None:
+    if not 1 == sum(1 for square in maze.squares if square.role is Role.ENTRANCE):
+        raise InvalidMazeException("Maze does not have exactly one entrance")
+
+
+def validate_exit(maze: Maze) -> None:
+    if not 1 == sum(1 for square in maze.squares if square.role is Role.EXIT):
+        raise InvalidMazeException("Maze does not have exactly one exit")
